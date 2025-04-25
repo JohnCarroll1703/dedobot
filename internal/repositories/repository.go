@@ -29,6 +29,6 @@ func (r *SkufRepo) Update(skuf *models.Skuf) error {
 
 func (r *SkufRepo) GetAll() ([]models.Skuf, error) {
 	var skufs []models.Skuf
-	err := r.db.Find(&skufs).Error
+	err := r.db.Order("weight DESC").Find(&skufs).Error
 	return skufs, err
 }
