@@ -70,17 +70,24 @@ func (h *BotHandler) respondToPhrase(text string) string {
 	case strings.Contains(lower, "привет"), strings.Contains(lower, "hi"):
 		return "Я вас категорически приветствую"
 	case strings.Contains(lower, "да"):
-		return "елда! ахаха!"
+		responses := []string{
+			"елда! ахаха 😂",
+			"на гей пати едут поезда 🚂🌈",
+		}
+		return responses[rand.Intn(len(responses))]
 	case strings.Contains(lower, "А"):
 		return "НЕ А!"
 	case strings.Contains(lower, "скуф"):
 		return "В ранние 90е такой хуйни не было"
 	case strings.Contains(lower, "слава дедам"):
 		return "ДЕДАМ СЛАВА!!!!"
+	case strings.Contains(lower, "машина"):
+		return "Я позаботился о твоей машИНЕ"
+	case strings.Contains(lower, "не заходи сзади"):
+		return "О да, без проблем чувак."
 	default:
-		// 10% chance to respond randomly
-		if rand.Intn(10) == 0 {
-			return "Oink? 🐽"
+		if rand.Intn(25) == 0 {
+			return "Я полковник. Пойдем на парад?"
 		}
 	}
 	return ""

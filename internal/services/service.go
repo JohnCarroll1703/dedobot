@@ -31,9 +31,22 @@ func (s *SkufService) FeedSkuf(userID int64) (string, error) {
 	if err != nil {
 		return "You need to /init your skuf first!", nil
 	}
+
+	if skuf.LastFedAt != nil && !isSameDay(*skuf.LastFedAt, time.Now()) {
+		skuf.FeedCount = 0
+	}
+
+	if skuf.FeedCount >= 2 && isSameDay(*skuf.LastFedAt, time.Now()) {
+		return "You've already fed your skuf twice today!", nil
+	}
+
 	rand.Seed(time.Now().UnixNano())
 	gain := float64(rand.Intn(8) + 1)
 	skuf.Weight += gain
+	skuf.FeedCount++
+	now := time.Now()
+	skuf.LastFedAt = &now
+
 	err = s.repo.Update(skuf)
 	return fmt.Sprintf("You fed your skuf! 🍖 It gained %.2f kg. Total weight: %.2f kg.", gain, skuf.Weight), err
 }
@@ -58,9 +71,15 @@ func (s *SkufService) ListSkufs() (string, error) {
 		return "No Skufs found yet. Be the first to /init one!", nil
 	}
 
-	result := "🐽 *List of Skufs*:\n"
+	result := "👴 *List of Skufs*:\n"
 	for i, skuf := range skufs {
-		result += fmt.Sprintf("%d. %s — %.2f kg (user ID: %d)\n", i+1, skuf.Name, skuf.Weight, skuf.UserID)
+		result += fmt.Sprintf("%d. %s — %.2f kg \n", i+1, skuf.Name, skuf.Weight)
 	}
 	return result, nil
+}
+
+func isSameDay(t1, t2 time.Time) bool {
+	y1, m1, d1 := t1.Date()
+	y2, m2, d2 := t2.Date()
+	return y1 == y2 && m1 == m2 && d1 == d2
 }
